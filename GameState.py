@@ -26,7 +26,7 @@ class GameState:
         print("  0 1 2")  # Column numbers
         print("  ------")
         for i, row in enumerate(self.board):
-            row_str = f"{i}|" + " ".join(
+            row_str = f"{i}| " + " ".join(
                 str(cell) if cell != 0 else "." for cell in row
             )
             print(row_str)
