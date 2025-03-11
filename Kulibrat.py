@@ -268,6 +268,9 @@ class KulibratGUI:
         start_row = 0 if current == 'B' else self.game.rows - 1
         legal = self.game.legal_moves(current)
 
+        if not legal:
+            self.switch_turn()
+
         # If nothing is selected yet.
         if self.selected_cell is None:
             # If clicked cell is empty and in starting row => insert move?
@@ -326,6 +329,7 @@ class KulibratGUI:
     def ai_move(self):
         legal = self.game.legal_moves(self.game.current)
         if not legal:
+            self.switch_turn()
             return
         _, chosen_move = self.game.minimax(self.search_depth, True, ai_player=self.game.current)
         if chosen_move:
