@@ -20,7 +20,9 @@ class GameState:
         self.actions = {"B": [], "R": []}
 
     def print_board(self):
-        print("\n  0 1 2")  # Column numbers
+        # Print the current board
+        print(f"\nPlayer: {self.player}")
+        print("  0 1 2")  # Column numbers
         print("  ------")
         for i, row in enumerate(self.board):
             row_str = f"{i}|" + " ".join(
@@ -28,6 +30,7 @@ class GameState:
             )
             print(row_str)
         print("  ------")
+        print(f"Black: {self.score['B']} | {self.score['R']} :Red")
 
     def piece_coordinates(self):
         # Find coordinates of all pieces
@@ -49,7 +52,7 @@ class GameState:
         # Check if a position is within the bounds of the board
         return row >= 0 and row < 4 and col >= 0 and col < 3
 
-    def find_actions(self):
+    def find_actions(self):  # ACTIONS(s) ------------------------------------------
         # Generate all possible actions for the current player
         black_pieces, red_pieces, empty_spaces = self.piece_coordinates()
 
@@ -57,7 +60,6 @@ class GameState:
 
         # Insert a piece
         if len(black_pieces) < 4:
-            # Find empty spots
             for i in range(3):
                 if self.board[0][i] == 0:
                     self.actions["B"].append(
@@ -106,7 +108,6 @@ class GameState:
 
         # Insert a piece
         if len(red_pieces) < 4:
-            # Find empty spots
             for i in range(3):
                 if self.board[3][i] == 0:
                     self.actions["R"].append(
@@ -158,10 +159,54 @@ class GameState:
         elif self.actions["R"] == [] and self.actions["B"] != []:
             self.actions["R"].append(("pass", (-1, -1), (-1, -1)))
 
-    def result(self, action):
-        pass
+    def move(self, action):  # RESULT(s,a) -----------------------------------------
+        # Apply an action to the current state
 
-    def terminal_test(self):
+        if self.game_over:
+            print("Game is over")
+            return
+
+        if action not in self.actions[self.player]:
+            print(f"\n !!! Invalid action: {action}, Moving player: {self.player} !!!")
+            print(f"Available actions: {self.actions[self.player]}")
+            return
+
+        move, start, end = action
+
+        match move:
+            case "insert":
+                self.board[end[0]][end[1]] = self.player
+                self.remaining_pieces[self.player] -= 1
+                self.player = "R" if self.player == "B" else "B"
+
+            case "diagonal":
+                self.board[start[0]][start[1]] = 0
+                if end != (-1, -1):
+                    self.board[end[0]][end[1]] = self.player
+                else:
+                    self.remaining_pieces[self.player] += 1
+                    self.score[self.player] += 1
+                self.player = "R" if self.player == "B" else "B"
+
+            case "attack":
+                self.board[start[0]][start[1]] = 0
+                self.board[end[0]][end[1]] = self.player
+                self.remaining_pieces["R" if self.player == "B" else "B"] -= 1
+                self.player = "R" if self.player == "B" else "B"
+
+            case "jump":
+                self.board[start[0]][start[1]] = 0
+                if end != (-1, -1):
+                    self.board[end[0]][end[1]] = self.player
+                else:
+                    self.remaining_pieces[self.player] += 1
+                    self.score[self.player] += 1
+                self.player = "R" if self.player == "B" else "B"
+
+            case "pass":
+                self.player = "R" if self.player == "B" else "B"
+
+    def terminal_test(self):  # TERMINAL-TEST(s) -----------------------------------
         if (self.score["B"] >= self.winning_score) or (
             self.player == "B" and not self.actions["R"] and not self.actions["B"]
         ):
@@ -188,35 +233,9 @@ class GameState:
             [(i, j) for i in range(4) for j in range(3) if (i, j) not in black_pieces],
             4,
         )
-
         for row, col in black_pieces:
             board[row][col] = "B"
         for row, col in red_pieces:
             board[row][col] = "R"
 
         return board
-
-
-# Tests
-game = GameState()
-game.board = game.generate_random_board(seed=2)
-game.print_board()
-game.find_actions()
-print(game.actions)
-print(game.terminal_test())
-
-game = GameState()
-game.board = [["R", "B", "R"], ["R", 0, "R"], [0, 0, 0], [0, 0, 0]]
-game.print_board()
-game.find_actions()
-print(game.actions)
-print(game.terminal_test())
-
-game = GameState()
-game.board = [["B", 0, "B"], [0, "B", 0], ["R", "B", "R"], ["R", 0, "R"]]
-game.player = "R"
-game.print_board()
-game.find_actions()
-print(game.actions)
-print(game.terminal_test())
-print(f"Moving player: {game.player}, Winner: {game.winner}")
