@@ -9,6 +9,8 @@ game.find_actions()
 print(game.actions)
 print(game.terminal_test())
 
+a=1
+
 
 """
 # Test 1
