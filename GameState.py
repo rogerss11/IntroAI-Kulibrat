@@ -258,3 +258,11 @@ class GameState:
             board[row][col] = "R"
 
         return board
+
+def utility(self):
+    if self.winner == "R":
+        return 1
+    elif self.winner == "B":
+        return -1
+    else:
+        return 0
