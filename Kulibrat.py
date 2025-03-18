@@ -3,7 +3,7 @@ from GameState import GameState
 from Board import Board
 
 def Kulibrat():
-    game = GameState()
+    game = GameState(winning_score=1)
     ui = Board(game)
     print("Welcome to Kulibrat!")
     #game.init_ventana()

@@ -9,6 +9,8 @@ class Board:
         self.window.geometry('1000x1000')
         self.window.title("Kulibrat Game")
 
+        self.window.protocol("WM_DELETE_WINDOW", self.on_close)
+
         self.canvas = tk.Canvas(self.window, width=1000, height= 1000,bg="white")
         self.canvas.pack(fill="both", expand=True)
 
@@ -16,7 +18,12 @@ class Board:
         self.cell_width = 500 / self.cols
         self.cell_height = 500 / self.rows
         self.board_x = (700 - 500) // 2  
-        self.board_y = (700 - 500) // 2 
+        self.board_y = (700 - 500) // 2
+
+        # Variable de control para el input
+        self.user_input_var = tk.StringVar()
+        self.submit_pressed = tk.BooleanVar(value=False)  # Importante definirla antes de on_close
+ 
 
         self.UI_board(game)
 
@@ -122,3 +129,8 @@ class Board:
             self.submit_pressed.set(True)  
         else:
             print("Not valid entry. Please select a valid entry.") 
+
+    def on_close(self):
+        print("Closing the game window...")
+        self.submit_pressed.set(True)  # Libera el bloqueo de wait_variable
+        self.window.destroy()  # Cierra la ventana correctamente
