@@ -4,66 +4,46 @@ import tkinter as tk
 
 class Board:
     def __init__(self, game):
-
-        self.window = tk.Tk()
-        self.window.geometry("1000x1000")
-        self.window.title("Kulibrat Game")
-
-        self.window.protocol("WM_DELETE_WINDOW", self.on_close)
-
-        self.canvas = tk.Canvas(self.window, width=1000, height=1000, bg="white")
-        self.canvas.pack(fill="both", expand=True)
-
-        self.cols, self.rows = 3, 4
-        self.cell_width = 500 / self.cols
-        self.cell_height = 500 / self.rows
-        self.board_x = (700 - 500) // 2
-        self.board_y = (700 - 500) // 2
-
-        # Input control variable
-        self.user_input_var = tk.StringVar()
-        self.submit_pressed = tk.BooleanVar(value=False)  # Define before on_close!!!
-        self.window.bind("<Return>", self.process_input)
-        
-        self.question_ai_red(game)
-        
+      self.player1_type = ''
+      self.player2_type = ''
+      pass        
 
     def question_ai_red(self,game):
         """
         Window to ask if you want to play with the AI. 
         """
         
-        self.window2 = tk.Tk()
-        self.window2.geometry('500x500')
-        self.window2.title("Question IA")
-        self.window2.protocol("WM_DELETE_WINDOW", self.on_close)
+        window2 = tk.Tk()
+        window2.geometry('500x500')
+        window2.title("Question IA")
+        window2.protocol("WM_DELETE_WINDOW", self.on_close)
 
-        self.canvas2 = tk.Canvas(self.window2, width=500, height= 500,bg="white")
-        self.canvas2.pack(fill="both", expand=True)
+        canvas2 = tk.Canvas(self.window2, width=500, height= 500,bg="white")
+        canvas2.pack(fill="both", expand=True)
 
-        self.canvas2.create_text(200, 200, text="What do you want the player red to be?", font=("Arial", 16), fill="black", anchor="center")
+        canvas2.create_text(200, 200, text="What do you want the player red to be?", font=("Arial", 16), fill="black", anchor="center")
 
-        self.ai_button = tk.Button(
-            self.window2, text="Ai", command=lambda: self.store_answer("ai",game)
+        ai_button = tk.Button(
+            window2, text="Ai", command=lambda: self.store_answer("ai",game)
         )
-        self.canvas2.create_window(
-            100, 250, window=self.ai_button, width=100, height=30
+        canvas2.create_window(
+            100, 250, window=ai_button, width=100, height=30
         )  
 
-        self.random_button = tk.Button(
-            self.window2, text="Random", command=lambda: self.store_answer("random",game)
+        random_button = tk.Button(
+            window2, text="Random", command=lambda: self.store_answer("random",game)
         )
 
-        self.canvas2.create_window(
-            200, 250, window=self.random_button, width=100, height=30
+        canvas2.create_window(
+            200, 250, window=random_button, width=100, height=30
         )  
 
-        self.human_button = tk.Button(
-            self.window2, text="human", command=lambda: self.store_answer("human",game)
+        human_button = tk.Button(
+            window2, text="human", command=lambda: self.store_answer("human",game)
         )
 
-        self.canvas2.create_window(
-            300, 250, window=self.human_button, width=100, height=30
+        canvas2.create_window(
+            300, 250, window=human_button, width=100, height=30
         ) 
 
     def question_ai_black(self,game):
@@ -71,7 +51,7 @@ class Board:
         Window to ask if you want to play with the AI. 
         """
         
-        self.window2 = tk.Tk()
+        window2 = tk.Tk()
         self.window2.geometry('500x500')
         self.window2.title("Question IA")
         self.window2.protocol("WM_DELETE_WINDOW", self.on_close)
@@ -122,7 +102,7 @@ class Board:
         """
         Draw the board and the pieces on the canvas
         """
-
+        self.init_window()
         self.canvas.delete("all")
 
         for i in range(self.rows):
@@ -230,7 +210,7 @@ class Board:
         self.submit_pressed = tk.BooleanVar(
             value=False
         )  # Controls how much the input changes
-        self.window.bind("<Return>", self.process_input)
+        #self.window.bind("<Return>", self.process_input)
 
 
         # Input (Entry) and Submit button
@@ -257,6 +237,27 @@ class Board:
         )
 
         self.print_board(game)
+        self.print_actions(game)
+
+    def init_window(self):
+        self.window = tk.Tk()
+        self.window.geometry("1000x1000")
+        self.window.title("Kulibrat Game")
+
+        self.canvas = tk.Canvas(self.window, width=1000, height=1000, bg="white")
+        self.canvas.pack(fill="both", expand=True)
+
+        self.cols, self.rows = 3, 4
+        self.cell_width = 500 / self.cols
+        self.cell_height = 500 / self.rows
+        self.board_x = (700 - 500) // 2
+        self.board_y = (700 - 500) // 2
+
+        # Input control variable
+        self.user_input_var = tk.StringVar()
+        self.submit_pressed = tk.BooleanVar(value=False)  # Define before on_close!!!
+        self.window.protocol("WM_DELETE_WINDOW", self.on_close)
+        #self.window.bind("<Return>", self.process_input)
 
     def print_board(self, game):
         """

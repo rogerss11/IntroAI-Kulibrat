@@ -9,7 +9,7 @@ def Kulibrat():
     #print(ui.answer)
     #game.init_ventana()
     while not game.terminal_test():
-        ui.print_actions(game)
+        ui.UI_board(game)
         action_idx = ui.get_input()
         if action_idx >= len(game.actions[game.player]):
             print("Invalid action!")
