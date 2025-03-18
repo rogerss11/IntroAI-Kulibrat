@@ -8,7 +8,13 @@ game.print_board()
 game.find_actions()
 print(game.actions)
 print(game.terminal_test())
-
+game2 = game
+game.move(game.actions[game.player][1])
+game.print_board()
+game2.print_board()
+game.move(game.actions[game.player][1])
+game.print_board()
+game2.print_board()
 
 """
 # Test 1
@@ -42,4 +48,13 @@ print(game.actions)
 print(game.terminal_test())
 print(f"Moving player: {game.player}, Winner: {game.winner}")
 
+# Test 4
+game = GameState()
+game.board = [[0, "B", 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]
+game.print_board()
+game.find_actions()
+print(game.actions)
+print(game.terminal_test())
+game.move(game.actions[game.player][1])
+game.print_board()
 """

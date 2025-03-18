@@ -1,4 +1,5 @@
 import random
+import copy
 
 
 class GameState:
@@ -16,7 +17,6 @@ class GameState:
         self.winner = None
         self.game_over = False
         self.utility = 0
-
         self.actions = self.find_actions()
 
     def print_board(self):
@@ -258,3 +258,8 @@ class GameState:
             board[row][col] = "R"
 
         return board
+
+    def clone_state(self):
+        gc = copy.deepcopy(self)
+        gc.__dict__ = copy.deepcopy(self.__dict__)
+        return gc
