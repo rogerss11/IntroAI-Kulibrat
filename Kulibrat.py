@@ -4,8 +4,9 @@ from Board import Board
 
 def Kulibrat():
     game = GameState(winning_score=1)
-    ui = Board(game)
+    ui = Board(game) 
     print("Welcome to Kulibrat!")
+    #print(ui.answer)
     #game.init_ventana()
     while not game.terminal_test():
         ui.print_actions(game)
