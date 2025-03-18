@@ -1,4 +1,3 @@
-import time
 from GameState import GameState
 from Board import Board
 import numpy as np
