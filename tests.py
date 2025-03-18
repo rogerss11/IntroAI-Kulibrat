@@ -5,7 +5,7 @@ from GameState import GameState
 game = GameState()
 game.board = [[0, "B", 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]
 game.print_board()
-game.find_actions()
+game.print_actions()
 print(game.actions)
 print(game.terminal_test())
 

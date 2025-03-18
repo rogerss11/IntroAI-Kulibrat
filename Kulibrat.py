@@ -7,7 +7,7 @@ def Kulibrat():
     game.print_board()
 
     while not game.terminal_test():
-        if game.player == "AI":  # Si el jugador actual es la IA
+        if game.player == "PC":  # Si el jugador actual es la IA
             action = alpha_beta_search(game)  # Llamamos a Alpha-Beta para que la IA elija el movimiento
             print(f"AI selects: {action}")
         else:
@@ -23,3 +23,5 @@ def Kulibrat():
     
     print("Game over!")
     print(f"Winner: {game.winner}")
+
+Kulibrat()
