@@ -12,6 +12,8 @@ https://ai-boson.github.io/mcts/
 class MonteCarlo:
     def __init__(self, game, parent=None, parent_action=None, c_param=1.4, sim_no=100):
         self.state = game.clone_state()
+        self.player = self.state.player
+        self.opponent = "B" if self.player == "R" else "R"
         self.parent = parent
         self.parent_action = parent_action
         self.children = []
@@ -33,7 +35,7 @@ class MonteCarlo:
         self._untried_actions = all_actions[self.state.player]
         return self._untried_actions
 
-    def q(self):
+    def q(self):  # U(n)
         """
         Returns the difference between the number of wins - loses.
         """
@@ -41,7 +43,7 @@ class MonteCarlo:
         loses = self._results[-1]
         return wins - loses
 
-    def n(self):
+    def n(self):  # N(n)
         """
         Returns the number of times each node is visited.
         """
@@ -69,7 +71,7 @@ class MonteCarlo:
     def rollout(self):
         """
         The entire game is simulated from the current state to the end.
-        The final result (utility) of the game is returned. +1, -1 or 0.
+        The final result (score) of the game is returned (Player score - Opponent score).
         Light playout policy.
         """
         current_rollout_state = self.state.clone_state()
@@ -79,7 +81,9 @@ class MonteCarlo:
             possible_moves = all_actions[current_rollout_state.player]
             action = self.rollout_policy(possible_moves)
             current_rollout_state.move(action)
-        return current_rollout_state.utility
+
+        score = 1 if current_rollout_state.winner == self.player else -1
+        return score
 
     def backpropagate(self, result):
         """
@@ -102,10 +106,11 @@ class MonteCarlo:
         """
         The childs are evaluated using the UCB1 formula.
         The child with the highest value is returned.
+        UCB1 = U(n) / N(n) + c * sqrt(ln(N(parent_n)) / N(n))
         """
         choices_weights = [
-            (c.q() / c.n()) + self._c * np.sqrt((2 * np.log(self.n()) / c.n()))
-            for c in self.children
+            (child.q() / child.n()) + self._c * np.sqrt((np.log(self.n()) / child.n()))
+            for child in self.children
         ]
         return self.children[np.argmax(choices_weights)]
 
@@ -146,5 +151,6 @@ class MonteCarlo:
 def monte_carlo_search(state, sim_no=100, c_param=1.4):
     root = MonteCarlo(state, sim_no=sim_no, c_param=c_param)
     selected_node = root.best_action()
-    print("number of visits: ", root._number_of_visits)
+    print("Number of visits: ", root._number_of_visits)
+    print("Results: ", root._results)
     return selected_node.parent_action
