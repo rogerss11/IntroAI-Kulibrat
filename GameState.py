@@ -20,34 +20,51 @@ class GameState:
 
         self.actions = self.find_actions()
 
-    def print_board(self):
-        window = tk.Tk()
-        window.geometry('700x700')
-        window.title("Kulibrat Game")
+        self.window = tk.Tk()
+        self.window.geometry('700x700')
+        self.window.title("Kulibrat Game")
 
-        canvas = tk.Canvas(window, width=700, height= 700,bg="white")
-        canvas.pack(fill="both", expand=True)
+        self.canvas = tk.Canvas(self.window, width=700, height= 700,bg="white")
+        self.canvas.pack(fill="both", expand=True)
 
-        cols, rows = 3, 4
-        cell_width = 500 / cols
-        cell_height = 500 / rows
-        board_x = (700 - 500) // 2  
-        board_y = (700 - 650) // 2 
+        self.cols, self.rows = 3, 4
+        self.cell_width = 500 / self.cols
+        self.cell_height = 500 / self.rows
+        self.board_x = (700 - 500) // 2  
+        self.board_y = (700 - 500) // 2 
 
-        for i in range(rows):
-            for j in range(cols):
-                x1 = board_x+ j * cell_width
-                y1 = board_y + i * cell_height
-                x2 = x1 + cell_width
-                y2 = y1 + cell_height
+        self.UI_board()
 
-                canvas.create_rectangle(x1, y1, x2, y2, fill="white", outline="black")
-
-        window.mainloop()
+        self.window.mainloop()
 
 
+    def UI_board(self):
+
+        self.canvas.delete('all')
+        
+        for i in range(self.rows):
+            for j in range(self.cols):
+                x1 = self.board_x+ j * self.cell_width
+                y1 = self.board_y + i * self.cell_height
+                x2 = x1 + self.cell_width
+                y2 = y1 + self.cell_height
+
+                self.canvas.create_rectangle(x1, y1, x2, y2, fill="white", outline="black")
+
+                if self.board[i][j] == "B":  # Black piece
+                    self.canvas.create_oval(x1+10, y1+10, x2-10, y2-10, fill="black")
+                elif self.board[i][j] == "R":  # Red piece
+                    self.canvas.create_oval(x1+10, y1+10, x2-10, y2-10, fill="red")
+
+        text_x = 700 // 2  
+        text_y = self.board_y + 530  
+                    
+        self.canvas.create_text(text_x, text_y, text=f"Score: Black {self.score['B']} | Red {self.score['R']} ", font=("Arial", 16), fill="black", anchor="center")
+        self.canvas.create_text(text_x, text_y + 30, text=f"Player:{self.player}", font=("Arial", 16), fill="black", anchor="center")
+                      
 
 
+        
         # Print the current board
         self.find_actions()
         print(f"\nPlayer: {self.player}")
@@ -60,7 +77,7 @@ class GameState:
             print(row_str)
         print("  ------")
         print(f"Black: {self.score['B']} | {self.score['R']} :Red")
-
+        
     def print_actions(self):
         # Print the current actions
         if not self.actions[self.player]:
@@ -251,7 +268,10 @@ class GameState:
 
             case "pass":
                 self.player = "R" if self.player == "B" else "B"
-
+                
+        self.find_actions()
+        self.UI_board()
+        
     def terminal_test(self):  # TERMINAL-TEST(s) -----------------------------------
         self.find_actions()
         if (self.score["B"] >= self.winning_score) or (
