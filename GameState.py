@@ -73,12 +73,19 @@ class GameState:
         return black_pieces, red_pieces, empty_spaces
 
     def in_bounds(self, row, col):
-        # Check if a position is within the bounds of the board
+        """
+        Check if a given coordinate is within the bounds of the board.
+        """
         return row >= 0 and row < 4 and col >= 0 and col < 3
 
     def find_actions(self):  # ACTIONS(s) ------------------------------------------
         self.actions = {"B": [], "R": []}
-        # Generate all possible actions for the current player
+        """
+        Find all possible actions for the current player.
+        Actions are stored as tuples: (move, start, end)
+        move: "insert", "diagonal", "attack", "jump", "pass""
+        The function modifies the self.actions dictionary and also returns it.
+        """
         black_pieces, red_pieces, empty_spaces = self.piece_coordinates()
 
         ### Black player ###
@@ -187,7 +194,11 @@ class GameState:
         return self.actions
 
     def move(self, action):  # RESULT(s,a) -----------------------------------------
-        # Apply an action to the current state
+        """
+        Move an action and update the game state.
+        action: tuple (move, start, end)
+        Function updates the board, remaining pieces, player and score.
+        """
 
         if self.game_over:
             print("Game is over")
@@ -234,6 +245,11 @@ class GameState:
                 self.player = "R" if self.player == "B" else "B"
 
     def terminal_test(self):  # TERMINAL-TEST(s) -----------------------------------
+        """
+        Check if the game is over.
+        Returns True if the game is over, False otherwise.
+        Also updates the self.game_over, self.winner and self.utility attributes.
+        """
         self.find_actions()
         if (self.score["B"] >= self.winning_score) or (
             self.player == "B" and not self.actions["R"] and not self.actions["B"]
@@ -253,7 +269,10 @@ class GameState:
         return self.game_over
 
     def generate_random_board(self, seed=None):
-        # Initialize an empty board, used for testing
+        """
+        Generates a random board
+        seed: random seed for reproducibility
+        """
         if seed is not None:
             random.seed(seed)
 
@@ -272,6 +291,9 @@ class GameState:
         return board
 
     def clone_state(self):
+        """ "
+        Clone the current game state to avoid modifying the original state.
+        """
         gc = copy.deepcopy(self)
         gc.__dict__ = copy.deepcopy(self.__dict__)
         return gc
