@@ -10,6 +10,8 @@ def ask_player_type(player_num):
             return choice
         else:
             print("Invalid choice, please choose between AI, random, or human.")
+import numpy as np
+
 
 def Kulibrat_console():
     game = GameState(winning_score=1)
