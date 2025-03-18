@@ -1,20 +1,20 @@
 import time
 from GameState import GameState
-import tkinter as tk
-
+from Board import Board
 
 def Kulibrat():
     game = GameState()
+    ui = Board(game)
     print("Welcome to Kulibrat!")
-    game.init_ventana()
+    #game.init_ventana()
     while not game.terminal_test():
-        game.print_actions()
-        action_idx = game.get_input()
+        ui.print_actions(game)
+        action_idx = ui.get_input()
         if action_idx >= len(game.actions[game.player]):
             print("Invalid action!")
             continue
         game.move(game.actions[game.player][int(action_idx)])
-        game.UI_board()
+        ui.UI_board(game)
         time.sleep(0.1)
     print("Game over!")
     print(f"Winner: {game.winner}")
