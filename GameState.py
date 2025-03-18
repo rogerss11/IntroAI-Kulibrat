@@ -20,11 +20,12 @@ class GameState:
 
         self.actions = self.find_actions()
 
+    def init_ventana(self):
         self.window = tk.Tk()
-        self.window.geometry('700x700')
+        self.window.geometry('1000x1000')
         self.window.title("Kulibrat Game")
 
-        self.canvas = tk.Canvas(self.window, width=700, height= 700,bg="white")
+        self.canvas = tk.Canvas(self.window, width=1000, height= 1000,bg="white")
         self.canvas.pack(fill="both", expand=True)
 
         self.cols, self.rows = 3, 4
@@ -35,7 +36,7 @@ class GameState:
 
         self.UI_board()
 
-        self.window.mainloop()
+        
 
 
     def UI_board(self):
@@ -58,13 +59,40 @@ class GameState:
 
         text_x = 700 // 2  
         text_y = self.board_y + 530  
-                    
+
+
+        #Numeros de las filas
+        self.canvas.create_text(50, self.board_y + 20, text="0", font=("Arial", 16), fill="black", anchor="center")
+        self.canvas.create_text(50, self.board_y + self.cell_width -20 , text="1", font=("Arial", 16), fill="black", anchor="center")
+        self.canvas.create_text(50, self.board_y + (self.cell_width* 2) - 30, text="2", font=("Arial", 16), fill="black", anchor="center")
+        self.canvas.create_text(50, self.board_y + (self.cell_width* 3) - 40, text="3", font=("Arial", 16), fill="black", anchor="center")
+
+        #Numeros de las columnas
+        self.canvas.create_text(self.board_x + 20, 50, text="0", font=("Arial", 16), fill="black", anchor="center")
+        self.canvas.create_text(self.board_x + self.cell_width + 20, 50 , text="1", font=("Arial", 16), fill="black", anchor="center")
+        self.canvas.create_text(self.board_x + + (self.cell_width* 2)+20, 50, text="2", font=("Arial", 16), fill="black", anchor="center")
+
         self.canvas.create_text(text_x, text_y, text=f"Score: Black {self.score['B']} | Red {self.score['R']} ", font=("Arial", 16), fill="black", anchor="center")
         self.canvas.create_text(text_x, text_y + 30, text=f"Player:{self.player}", font=("Arial", 16), fill="black", anchor="center")
-                      
+
+        #  Variable de control para el input
+        self.user_input_var = tk.StringVar()
+        self.submit_pressed = tk.BooleanVar(value=False)  # Controla cuándo se ha enviado la entrada
+
+        # Input (Entry) y botón de Submit
+
+        self.canvas.create_text(780, 370, text="Select action: ", font=("Arial", 16), fill="black", anchor="center")
+
+        self.input_box = tk.Entry(self.window, font=("Arial", 14), textvariable=self.user_input_var)
+        self.canvas.create_window(780, 400, window=self.input_box, width=200, height=30)
+
+        self.submit_button = tk.Button(self.window, text="Submit", command=self.process_input)
+        self.canvas.create_window(820, 600, window=self.submit_button, width=100, height=30) 
+
+        self.print_board()             
 
 
-        
+    def print_board(self):    
         # Print the current board
         self.find_actions()
         print(f"\nPlayer: {self.player}")
@@ -79,6 +107,25 @@ class GameState:
         print(f"Black: {self.score['B']} | {self.score['R']} :Red")
         
     def print_actions(self):
+
+        # Print the current actions
+        if not self.actions[self.player]:
+            self.canvas.create_text(780, 200, text=f"\nMoving Player: {self.player}, No available actions", font=("Arial", 16), fill="black", anchor="center")
+            return
+
+        
+        self.canvas.create_text(780, 200, text=f"\nMoving Player: {self.player}, Available actions:", font=("Arial", 16), fill="black", anchor="center")
+        for i, action in enumerate(self.actions[self.player]):
+            move, start, end = action
+            if start == (-1, -1):
+                start = "Outside"
+            if end == (-1, -1):
+                end = "Outside"
+
+            self.canvas.create_text(780, 260 + (i*30), text=f"{i}: {move} from {start} to {end}", font=("Arial", 16), fill="black", anchor="center")
+        return
+
+    '''
         # Print the current actions
         if not self.actions[self.player]:
             print(f"\nMoving Player: {self.player}, No available actions")
@@ -92,7 +139,29 @@ class GameState:
             if end == (-1, -1):
                 end = "Outside"
             print(f"    {i}: {move} from {start} to {end}")
-        return
+        return'
+    '''
+
+
+    def get_input(self):
+        
+        print("Waiting fot the action...")
+        self.submit_pressed.set(False)  
+        self.window.wait_variable(self.submit_pressed)  
+        return self.user_text  
+    
+    def process_input(self):
+       
+        user_input = self.user_input_var.get().strip()
+
+        if user_input.isdigit():  
+            self.user_text = int(user_input)
+            print(f"Selected action: {self.user_text}")  
+            self.submit_pressed.set(True)  
+        else:
+            print("Not valid entry. Please select a valid entry.")  
+
+
 
     def piece_coordinates(self):
         # Find coordinates of all pieces
@@ -269,8 +338,6 @@ class GameState:
             case "pass":
                 self.player = "R" if self.player == "B" else "B"
                 
-        self.find_actions()
-        self.UI_board()
         
     def terminal_test(self):  # TERMINAL-TEST(s) -----------------------------------
         self.find_actions()
