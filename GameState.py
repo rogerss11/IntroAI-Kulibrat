@@ -292,9 +292,8 @@ class GameState:
         return board
 
     def clone_state(self):
-        """ "
+        """
         Clone the current game state to avoid modifying the original state.
         """
         gc = copy.deepcopy(self)
-        gc.__dict__ = copy.deepcopy(self.__dict__)
         return gc

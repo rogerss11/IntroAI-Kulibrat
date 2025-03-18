@@ -9,8 +9,8 @@ https://ai-boson.github.io/mcts/
 """
 
 
-class MonteCarloSearch:
-    def __init__(self, game, parent=None, parent_action=None):
+class MonteCarlo:
+    def __init__(self, game, parent=None, parent_action=None, c_param=1.4, sim_no=100):
         self.state = game.clone_state()
         self.parent = parent
         self.parent_action = parent_action
@@ -21,6 +21,8 @@ class MonteCarloSearch:
         self._results[-1] = 0
         self._untried_actions = None
         self._untried_actions = self.untried_actions()
+        self._c = c_param
+        self._sim_no = sim_no
         return
 
     def untried_actions(self):
@@ -51,8 +53,9 @@ class MonteCarloSearch:
         and the child_node corresponding to this generated state is returned.
         """
         action = self._untried_actions.pop()
-        next_state = self.state.move(action)
-        child_node = MonteCarloSearch(next_state, parent=self, parent_action=action)
+        next_state = self.state.clone_state()
+        next_state.move(action)
+        child_node = MonteCarlo(next_state, parent=self, parent_action=action)
 
         self.children.append(child_node)
         return child_node
@@ -95,13 +98,13 @@ class MonteCarloSearch:
         """
         return len(self._untried_actions) == 0
 
-    def best_child(self, c_param=1.4):
+    def best_child(self):
         """
         The childs are evaluated using the UCB1 formula.
         The child with the highest value is returned.
         """
         choices_weights = [
-            (c.q() / c.n()) + c_param * np.sqrt((2 * np.log(self.n()) / c.n()))
+            (c.q() / c.n()) + self._c * np.sqrt((2 * np.log(self.n()) / c.n()))
             for c in self.children
         ]
         return self.children[np.argmax(choices_weights)]
@@ -129,7 +132,7 @@ class MonteCarloSearch:
         Returns the node corresponding to the best possible move
         For all the simulations: run the tree policy, rollout and backpropagate.
         """
-        simulation_no = 100
+        simulation_no = self._sim_no
 
         for i in range(simulation_no):
 
@@ -137,10 +140,11 @@ class MonteCarloSearch:
             reward = v.rollout()
             v.backpropagate(reward)
 
-        return self.best_child(c_param=1.4)
+        return self.best_child()
 
 
-def monte_carlo(state):
-    root = MonteCarloSearch(state=state)
+def monte_carlo_search(state, sim_no=100, c_param=1.4):
+    root = MonteCarlo(state, sim_no=sim_no, c_param=c_param)
     selected_node = root.best_action()
+    print("number of visits: ", root._number_of_visits)
     return selected_node.parent_action
