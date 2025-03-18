@@ -1,4 +1,5 @@
 import random
+import copy
 import tkinter as tk
 
 
@@ -17,11 +18,47 @@ class GameState:
         self.winner = None
         self.game_over = False
         self.utility = 0
+        self.actions = self.find_actions()
 
-        self.actions = self.find_actions() 
+    def print_board(self):
+        """
+        Print the current board state.
+        """
+        self.find_actions()
+        print(f"\nPlayer: {self.player}")
+        print("  0 1 2")  # Column numbers
+        print("  ------")
+        for i, row in enumerate(self.board):
+            row_str = f"{i}| " + " ".join(
+                str(cell) if cell != 0 else "." for cell in row
+            )
+            print(row_str)
+        print("  ------")
+        print(f"Black: {self.score['B']} | {self.score['R']} :Red")
+
+    def print_actions(self):
+        """
+        Print the available actions for the current player.
+        """
+        if not self.actions[self.player]:
+            print(f"\nMoving Player: {self.player}, No available actions")
+            return
+
+        print(f"\nMoving Player: {self.player}, Available actions:")
+        for i, action in enumerate(self.actions[self.player]):
+            move, start, end = action
+            if start == (-1, -1):
+                start = "Outside"
+            if end == (-1, -1):
+                end = "Outside"
+            print(f"    {i}: {move} from {start} to {end}")
+        return
 
     def piece_coordinates(self):
-        # Find coordinates of all pieces
+        """
+        Find the coordinates of all pieces on the board.
+        Returns a list of coordinates for black pieces, red pieces and empty spaces.
+        """
         black_pieces = []
         red_pieces = []
         empty_spaces = []
@@ -37,12 +74,19 @@ class GameState:
         return black_pieces, red_pieces, empty_spaces
 
     def in_bounds(self, row, col):
-        # Check if a position is within the bounds of the board
+        """
+        Check if a given coordinate is within the bounds of the board.
+        """
         return row >= 0 and row < 4 and col >= 0 and col < 3
 
     def find_actions(self):  # ACTIONS(s) ------------------------------------------
         self.actions = {"B": [], "R": []}
-        # Generate all possible actions for the current player
+        """
+        Find all possible actions for the current player.
+        Actions are stored as tuples: (move, start, end)
+        move: "insert", "diagonal", "attack", "jump", "pass""
+        The function modifies the self.actions dictionary and also returns it.
+        """
         black_pieces, red_pieces, empty_spaces = self.piece_coordinates()
 
         ### Black player ###
@@ -148,8 +192,14 @@ class GameState:
         elif self.actions["R"] == [] and self.actions["B"] != []:
             self.actions["R"].append(("pass", (-1, -1), (-1, -1)))
 
+        return self.actions
+
     def move(self, action):  # RESULT(s,a) -----------------------------------------
-        # Apply an action to the current state
+        """
+        Move an action and update the game state.
+        action: tuple (move, start, end)
+        Function updates the board, remaining pieces, player and score.
+        """
 
         if self.game_over:
             print("Game is over")
@@ -194,26 +244,36 @@ class GameState:
 
             case "pass":
                 self.player = "R" if self.player == "B" else "B"
-                
-        
+
     def terminal_test(self):  # TERMINAL-TEST(s) -----------------------------------
+        """
+        Check if the game is over.
+        Returns True if the game is over, False otherwise.
+        Also updates the self.game_over, self.winner and self.utility attributes.
+        """
         self.find_actions()
         if (self.score["B"] >= self.winning_score) or (
             self.player == "B" and not self.actions["R"] and not self.actions["B"]
         ):
             self.winner = "B"
             self.utility = 1
-            return True
+            self.game_over = True
+            return self.game_over
         if (self.score["R"] >= self.winning_score) or (
             self.player == "R" and not self.actions["B"] and not self.actions["R"]
         ):
             self.winner = "R"
             self.utility = -1
-            return True
-        return False
+            self.game_over = True
+            return self.game_over
+        self.game_over = False
+        return self.game_over
 
     def generate_random_board(self, seed=None):
-        # Initialize an empty board, used for testing
+        """
+        Generates a random board
+        seed: random seed for reproducibility
+        """
         if seed is not None:
             random.seed(seed)
 
@@ -230,3 +290,11 @@ class GameState:
             board[row][col] = "R"
 
         return board
+
+    def clone_state(self):
+        """ "
+        Clone the current game state to avoid modifying the original state.
+        """
+        gc = copy.deepcopy(self)
+        gc.__dict__ = copy.deepcopy(self.__dict__)
+        return gc
