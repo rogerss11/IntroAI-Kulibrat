@@ -1,4 +1,5 @@
 import random
+import tkinter as tk
 
 
 class GameState:
@@ -20,6 +21,33 @@ class GameState:
         self.actions = self.find_actions()
 
     def print_board(self):
+        window = tk.Tk()
+        window.geometry('700x700')
+        window.title("Kulibrat Game")
+
+        canvas = tk.Canvas(window, width=700, height= 700,bg="white")
+        canvas.pack(fill="both", expand=True)
+
+        cols, rows = 3, 4
+        cell_width = 500 / cols
+        cell_height = 500 / rows
+        board_x = (700 - 500) // 2  
+        board_y = (700 - 650) // 2 
+
+        for i in range(rows):
+            for j in range(cols):
+                x1 = board_x+ j * cell_width
+                y1 = board_y + i * cell_height
+                x2 = x1 + cell_width
+                y2 = y1 + cell_height
+
+                canvas.create_rectangle(x1, y1, x2, y2, fill="white", outline="black")
+
+        window.mainloop()
+
+
+
+
         # Print the current board
         self.find_actions()
         print(f"\nPlayer: {self.player}")
