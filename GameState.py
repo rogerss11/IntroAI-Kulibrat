@@ -20,7 +20,9 @@ class GameState:
         self.actions = self.find_actions()
 
     def print_board(self):
-        # Print the current board
+        """
+        Print the current board state.
+        """
         self.find_actions()
         print(f"\nPlayer: {self.player}")
         print("  0 1 2")  # Column numbers
@@ -34,7 +36,9 @@ class GameState:
         print(f"Black: {self.score['B']} | {self.score['R']} :Red")
 
     def print_actions(self):
-        # Print the current actions
+        """
+        Print the available actions for the current player.
+        """
         if not self.actions[self.player]:
             print(f"\nMoving Player: {self.player}, No available actions")
             return
@@ -50,7 +54,10 @@ class GameState:
         return
 
     def piece_coordinates(self):
-        # Find coordinates of all pieces
+        """
+        Find the coordinates of all pieces on the board.
+        Returns a list of coordinates for black pieces, red pieces and empty spaces.
+        """
         black_pieces = []
         red_pieces = []
         empty_spaces = []
@@ -177,6 +184,8 @@ class GameState:
         elif self.actions["R"] == [] and self.actions["B"] != []:
             self.actions["R"].append(("pass", (-1, -1), (-1, -1)))
 
+        return self.actions
+
     def move(self, action):  # RESULT(s,a) -----------------------------------------
         # Apply an action to the current state
 
@@ -231,14 +240,17 @@ class GameState:
         ):
             self.winner = "B"
             self.utility = 1
-            return True
+            self.game_over = True
+            return self.game_over
         if (self.score["R"] >= self.winning_score) or (
             self.player == "R" and not self.actions["B"] and not self.actions["R"]
         ):
             self.winner = "R"
             self.utility = -1
-            return True
-        return False
+            self.game_over = True
+            return self.game_over
+        self.game_over = False
+        return self.game_over
 
     def generate_random_board(self, seed=None):
         # Initialize an empty board, used for testing
