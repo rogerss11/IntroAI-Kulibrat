@@ -222,14 +222,17 @@ class Board:
             )
         return
 
-    def get_input(self):
+    def get_input(self,player_type):
         """
         Get the user input from the Entry widget
         """
-        print("Waiting fot the action...")
-        self.submit_pressed.set(False)
-        self.window.wait_variable(self.submit_pressed)
-        return self.user_text
+        #print("Waiting fot the action...")
+        if player_type == "human":
+            self.submit_pressed.set(False)
+            self.window.wait_variable(self.submit_pressed)
+            return self.user_text
+        else:
+            return None
 
     def process_input(self):
         """

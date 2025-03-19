@@ -13,6 +13,7 @@ def Kulibrat():  # -----------------------------------------------------------
     game = GameState(winning_score=1)
     ui = Board(game)
     print("Welcome to Kulibrat!")
+    """
     while not game.terminal_test():
         ui.print_actions(game)
         action_idx = ui.get_input()
@@ -20,6 +21,41 @@ def Kulibrat():  # -----------------------------------------------------------
             print("Invalid action!")
             continue
         game.move(game.actions[game.player][int(action_idx)])
+    """
+    
+    while not game.terminal_test():
+        ui.print_actions(game)
+
+        if game.player == "R":  # If it's player 1's turn
+            if player1_type == "human":
+                action_idx = ui.get_input(player1_type)
+                game.move(game.actions[game.player][action_idx])
+                if action_idx >= len(game.actions[game.player]):
+                    print("Invalid action!")
+                    continue
+            elif player1_type == "random":
+                action_idx = np.random.randint(0, len(game.actions[game.player]))
+                game.move(game.actions[game.player][action_idx])
+            elif player1_type == "ai":
+                # AI intelligence
+                action = monte_carlo_search(game)
+                game.move(action)
+
+        else:  # If it's player 2's turn
+            if player2_type == "human":
+                action_idx = ui.get_input(player2_type)
+                game.move(game.actions[game.player][action_idx])
+                if action_idx >= len(game.actions[game.player]):
+                    print("Invalid action!")
+                    continue
+            elif player2_type == "random":
+                action_idx = np.random.randint(0, len(game.actions[game.player]))
+                game.move(game.actions[game.player][action_idx])
+            elif player2_type == "ai":
+                # Here you could add logic for AI intelligence
+                action = monte_carlo_search(game)
+                game.move(action)
+
         ui.UI_board(game)
         time.sleep(0.1)
     print("Game over!")
