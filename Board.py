@@ -162,6 +162,8 @@ class Board:
             820, 650, window=self.submit_button, width=100, height=30
         )
 
+        self.window.bind("<Return>", lambda event: self.process_input())
+
         self.print_board(game)
 
     def print_board(self, game):
