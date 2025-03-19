@@ -36,10 +36,12 @@ def Kulibrat():  # -----------------------------------------------------------
             elif player1_type == "random":
                 action_idx = np.random.randint(0, len(game.actions[game.player]))
                 game.move(game.actions[game.player][action_idx])
+                time.sleep(1)
             elif player1_type == "ai":
                 # AI intelligence
                 action = monte_carlo_search(game)
                 game.move(action)
+                time.sleep(1)
 
         else:  # If it's player 2's turn
             if player2_type == "human":
@@ -51,13 +53,20 @@ def Kulibrat():  # -----------------------------------------------------------
             elif player2_type == "random":
                 action_idx = np.random.randint(0, len(game.actions[game.player]))
                 game.move(game.actions[game.player][action_idx])
+                time.sleep(1)
             elif player2_type == "ai":
                 # Here you could add logic for AI intelligence
                 action = monte_carlo_search(game)
                 game.move(action)
+                time.sleep(1)
 
         ui.UI_board(game)
+        ui.window.update_idletasks()
+        ui.window.update() 
         time.sleep(0.1)
+    
+    ui.on_close()
+    pq.end_game(game.winner)
     print("Game over!")
     print(f"Winner: {game.winner}")
     return

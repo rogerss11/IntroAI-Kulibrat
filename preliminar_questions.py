@@ -66,3 +66,28 @@ def question_ai_black():
 
     window2.wait_variable(player2_type)  
     return player2_type.get()
+
+def end_game(winner):
+    """
+    Window to ask what type of player Black should be.
+    Returns: The selected type ("ai", "random", or "human").
+    """
+    window2 = tk.Tk()
+    window2.geometry('500x500')
+    window2.title("Game Over")
+
+    canvas2 = tk.Canvas(window2, width=500, height=500, bg="white")
+    canvas2.pack(fill="both", expand=True)
+
+    canvas2.create_text(200, 200, text="GAME OVER", 
+                        font=("Arial", 24), fill="black", anchor="center")
+
+    if winner == 'R':
+        canvas2.create_text(200, 240, text="Winner: RED", 
+                        font=("Arial", 24), fill="red", anchor="center")
+
+    else:
+        canvas2.create_text(200, 240, text="Winner: BLACK", 
+                        font=("Arial", 24), fill="black", anchor="center")
+    
+    window2.mainloop()
