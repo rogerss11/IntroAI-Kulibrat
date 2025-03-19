@@ -3,9 +3,13 @@ from GameState import GameState
 from Board import Board
 import numpy as np
 from MonteCarlo import monte_carlo_search
+import preliminar_questions as pq
 
 
 def Kulibrat():  # -----------------------------------------------------------
+    player1_type = pq.question_ai_red()
+    player2_type = pq.question_ai_black()
+
     game = GameState(winning_score=1)
     ui = Board(game)
     print("Welcome to Kulibrat!")
@@ -108,6 +112,6 @@ def Kulibrat_console():  # -------------------------------------------------
     print(f"Winner: {game.winner}")
 
 
-# Kulibrat()
+Kulibrat()
 # Kulibrat_console_simple()
-Kulibrat_console()
+#Kulibrat_console()
