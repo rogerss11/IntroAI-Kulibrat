@@ -1,28 +1,18 @@
 import time
 from GameState import GameState
-from Board import Board
+from Interface import *
 import numpy as np
 from MonteCarlo import monte_carlo_search
-import preliminar_questions as pq
 
 
 def Kulibrat():  # -----------------------------------------------------------
-    player1_type = pq.question_ai_red()
-    player2_type = pq.question_ai_black()
+    player1_type = question_ai_red()
+    player2_type = question_ai_black()
 
     game = GameState(winning_score=1)
     ui = Board(game)
     print("Welcome to Kulibrat!")
-    """
-    while not game.terminal_test():
-        ui.print_actions(game)
-        action_idx = ui.get_input()
-        if action_idx >= len(game.actions[game.player]):
-            print("Invalid action!")
-            continue
-        game.move(game.actions[game.player][int(action_idx)])
-    """
-    
+
     while not game.terminal_test():
         ui.print_actions(game)
 
@@ -62,11 +52,11 @@ def Kulibrat():  # -----------------------------------------------------------
 
         ui.UI_board(game)
         ui.window.update_idletasks()
-        ui.window.update() 
+        ui.window.update()
         time.sleep(0.1)
-    
+
     ui.on_close()
-    pq.end_game(game.winner)
+    end_game(game.winner)
     print("Game over!")
     print(f"Winner: {game.winner}")
     return
@@ -159,4 +149,4 @@ def Kulibrat_console():  # -------------------------------------------------
 
 Kulibrat()
 # Kulibrat_console_simple()
-#Kulibrat_console()
+# Kulibrat_console()
