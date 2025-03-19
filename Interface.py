@@ -386,3 +386,16 @@ def end_game(winner):
         )
 
     window2.mainloop()
+
+
+def ask_player_type(player_num):
+    """Function to ask the user what type of player they want to be."""
+    while True:
+        choice = input(
+            f"What type of player will player {player_num} be? (AI/random/human): "
+        ).lower()
+        if choice in ["ai", "random", "human"]:
+            return choice
+        else:
+            print("Invalid choice, please choose between AI, random, or human.")
+        return
