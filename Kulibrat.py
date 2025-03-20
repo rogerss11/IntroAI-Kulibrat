@@ -4,15 +4,12 @@ from Interface import *
 import numpy as np
 from MonteCarlo import monte_carlo_search
 
-### REVISAR LA IA, NO ESTA FUNCIONANDO BIEN ###
-# creo que juega a perder xd
 
-
-def Kulibrat():  # -----------------------------------------------------------
+def Kulibrat(winning_score=5, N_sim=100, c_param=1.4):
     player1_type = question_ai_red()
     player2_type = question_ai_black()
 
-    game = GameState(winning_score=1)
+    game = GameState(winning_score=winning_score)
     ui = Board(game)
     print("Welcome to Kulibrat!")
 
@@ -29,12 +26,12 @@ def Kulibrat():  # -----------------------------------------------------------
             elif player1_type == "random":
                 action_idx = np.random.randint(0, len(game.actions[game.player]))
                 game.move(game.actions[game.player][action_idx])
-                time.sleep(1)
+                time.sleep(0.5)
             elif player1_type == "ai":
                 # AI intelligence
-                action = monte_carlo_search(game)
+                action = monte_carlo_search(game, sim_no=N_sim, c_param=c_param)
                 game.move(action)
-                time.sleep(1)
+                time.sleep(0.5)
 
         else:  # If it's player 2's turn
             if player2_type == "human":
@@ -46,12 +43,11 @@ def Kulibrat():  # -----------------------------------------------------------
             elif player2_type == "random":
                 action_idx = np.random.randint(0, len(game.actions[game.player]))
                 game.move(game.actions[game.player][action_idx])
-                time.sleep(1)
+                time.sleep(0.5)
             elif player2_type == "ai":
-                # Here you could add logic for AI intelligence
-                action = monte_carlo_search(game)
+                action = monte_carlo_search(game, sim_no=N_sim, c_param=c_param)
                 game.move(action)
-                time.sleep(1)
+                time.sleep(0.5)
 
         ui.UI_board(game)
         ui.window.update_idletasks()
@@ -65,8 +61,8 @@ def Kulibrat():  # -----------------------------------------------------------
     return
 
 
-def Kulibrat_console():  # -------------------------------------------------
-    game = GameState(winning_score=1)
+def Kulibrat_console(winning_Score=5, N_sim=100, c_param=1.4):
+    game = GameState(winning_score=winning_Score)
 
     # Ask the user for player types
     print("Before starting, choose the player types.")
@@ -92,7 +88,7 @@ def Kulibrat_console():  # -------------------------------------------------
                 game.move(game.actions[game.player][action_idx])
             elif player1_type == "ai":
                 # AI intelligence
-                action = monte_carlo_search(game)
+                action = monte_carlo_search(game, sim_no=N_sim, c_param=c_param)
                 game.move(action)
 
         else:  # If it's player 2's turn
@@ -106,8 +102,7 @@ def Kulibrat_console():  # -------------------------------------------------
                 action_idx = np.random.randint(0, len(game.actions[game.player]))
                 game.move(game.actions[game.player][action_idx])
             elif player2_type == "ai":
-                # Here you could add logic for AI intelligence
-                action = monte_carlo_search(game)
+                action = monte_carlo_search(game, sim_no=N_sim, c_param=c_param)
                 game.move(action)
 
         game.print_board()
@@ -117,5 +112,6 @@ def Kulibrat_console():  # -------------------------------------------------
     print(f"Winner: {game.winner}")
 
 
-Kulibrat()
-# Kulibrat_console()
+if __name__ == "__main__":  # Un/Comment to play in the UI or console
+    Kulibrat()
+    # Kulibrat_console()
