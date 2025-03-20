@@ -12,11 +12,12 @@ Denmark Technical University
 # Game parameters ---------------------------------------------------
 win_score = 5
 # AI paramters
-N_sim = 1000
-c_param = 1.41
+N_sim = 1000  # Number of simulations per move
+c_param = 1  # Higher C means more exploration
+epsilon = 0.1  # Epsilon-greedy policy
 
 # ======================== PLAY THE GAME ============================
 
 if __name__ == "__main__":  # Un/Comment to play in the UI or console
-    # Kulibrat(winning_score=win_score, N_sim=N_sim, c_param=c_param)  # UI
-    Kulibrat_console(winning_score=win_score, N_sim=N_sim, c_param=c_param)  # Console
+    Kulibrat(winning_score=win_score, N_sim=N_sim, c_param=c_param, epsilon=0.1)  # UI
+    # Kulibrat_console(winning_score=win_score, N_sim=N_sim, c_param=c_param)  # Console
