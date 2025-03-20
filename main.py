@@ -1,4 +1,4 @@
-from Kulibrat import Kulibrat, Kulibrat_console
+from src.Kulibrat import Kulibrat, Kulibrat_console
 
 """
 KULIBRAT GAME
@@ -12,11 +12,11 @@ Denmark Technical University
 # Game parameters ---------------------------------------------------
 win_score = 5
 # AI paramters
-N_sim = 100
-c_param = 1.4
+N_sim = 1000
+c_param = 1.41
 
 # ======================== PLAY THE GAME ============================
 
 if __name__ == "__main__":  # Un/Comment to play in the UI or console
-    Kulibrat(winning_score=win_score, N_sim=N_sim, c_param=c_param)  # UI
-    # Kulibrat_console(winning_score=win_score, N_sim=N_sim, c_param=c_param)    # Console
+    # Kulibrat(winning_score=win_score, N_sim=N_sim, c_param=c_param)  # UI
+    Kulibrat_console(winning_score=win_score, N_sim=N_sim, c_param=c_param)  # Console

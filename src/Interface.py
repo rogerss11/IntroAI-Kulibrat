@@ -1,4 +1,3 @@
-from GameState import GameState
 import tkinter as tk
 
 

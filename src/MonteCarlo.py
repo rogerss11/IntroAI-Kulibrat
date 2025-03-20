@@ -1,8 +1,6 @@
 import numpy as np
 from collections import defaultdict
 
-from GameState import GameState
-
 """
 Code inspired from:
 https://ai-boson.github.io/mcts/
@@ -10,7 +8,15 @@ https://ai-boson.github.io/mcts/
 
 
 class MonteCarlo:
-    def __init__(self, game, parent=None, parent_action=None, c_param=1.4, sim_no=100):
+    def __init__(
+        self,
+        game,
+        parent=None,
+        parent_action=None,
+        c_param=1.4,
+        sim_no=100,
+        epsilon=0.1,
+    ):
         self.state = game.clone_state()
         self.player = self.state.player
         self.opponent = "B" if self.player == "R" else "R"
@@ -24,6 +30,7 @@ class MonteCarlo:
         self._untried_actions = None
         self._untried_actions = self.untried_actions()
         self._c = c_param
+        self._epsilon = epsilon
         self._sim_no = sim_no
         return
 
@@ -41,7 +48,7 @@ class MonteCarlo:
         """
         wins = self._results[1]
         loses = self._results[-1]
-        return wins - loses
+        return wins
 
     def n(self):  # N(n)
         """
@@ -145,12 +152,16 @@ class MonteCarlo:
             reward = v.rollout()
             v.backpropagate(reward)
 
+            # Debug: Print all children of the root
+        print("Final children stats:")
+        for child in self.children:
+            print(
+                f"Action: {child.parent_action}, Visits: {child.n()}, Reward: {child.q()}"
+            )
         return self.best_child()
 
 
 def monte_carlo_search(state, sim_no=100, c_param=1.4):
     root = MonteCarlo(state, sim_no=sim_no, c_param=c_param)
     selected_node = root.best_action()
-    print("Number of visits: ", root._number_of_visits)
-    print("Results: ", root._results)
     return selected_node.parent_action

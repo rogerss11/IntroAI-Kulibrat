@@ -1,8 +1,8 @@
 import time
-from GameState import GameState
-from Interface import *
 import numpy as np
-from MonteCarlo import monte_carlo_search
+from src.GameState import GameState
+from src.Interface import *
+from src.MonteCarlo import monte_carlo_search
 
 
 def Kulibrat(winning_score=5, N_sim=100, c_param=1.4):
@@ -61,8 +61,8 @@ def Kulibrat(winning_score=5, N_sim=100, c_param=1.4):
     return
 
 
-def Kulibrat_console(winning_Score=5, N_sim=100, c_param=1.4):
-    game = GameState(winning_score=winning_Score)
+def Kulibrat_console(winning_score=5, N_sim=100, c_param=1.4):
+    game = GameState(winning_score=winning_score)
 
     # Ask the user for player types
     print("Before starting, choose the player types.")
