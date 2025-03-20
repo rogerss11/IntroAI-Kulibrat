@@ -5,7 +5,7 @@ import numpy as np
 from MonteCarlo import monte_carlo_search
 
 
-def Kulibrat(winning_score=5, N_sim=100, c_param=1.4):
+def Kulibrat(winning_score=5, N_sim=80, c_param=1.4):
     player1_type = question_ai_red()
     player2_type = question_ai_black()
 
