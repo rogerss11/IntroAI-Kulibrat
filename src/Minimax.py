@@ -1,11 +1,12 @@
 import math
 
+
 def evaluate_state(state, player):
     opponent = "B" if player == "R" else "R"
 
     score_diff = state.score[player] - state.score[opponent]
     remaining_diff = state.remaining_pieces[opponent] - state.remaining_pieces[player]
-    
+
     actions = state.find_actions()
     my_actions = actions[player]
     opp_actions = actions[opponent]
@@ -19,14 +20,14 @@ def evaluate_state(state, player):
     pass_penalty = -3 if my_actions == [("pass", (-1, -1), (-1, -1))] else 0
 
     evaluation = (
-        score_diff * 10 +
-        len(scoring_moves) * 6 -
-        len(opponent_scoring_moves) * 4 +
-        len(attack_moves) * 3 -
-        len(under_attack) * 2 +
-        remaining_diff * 1.5 +
-        (len(my_actions) - len(opp_actions)) * 0.5 +
-        pass_penalty
+        score_diff * 10
+        + len(scoring_moves) * 6
+        - len(opponent_scoring_moves) * 4
+        + len(attack_moves) * 5
+        - len(under_attack) * 2
+        + remaining_diff * 1.5
+        + (len(my_actions) - len(opp_actions)) * 0.5
+        + pass_penalty
     )
 
     return evaluation
@@ -49,7 +50,9 @@ def minimax(state, depth, alpha, beta, maximizing_player, player_id):
         for action in legal_actions:
             next_state = state.clone_state()
             next_state.move(action)
-            eval_score, _ = minimax(next_state, depth - 1, alpha, beta, False, player_id)
+            eval_score, _ = minimax(
+                next_state, depth - 1, alpha, beta, False, player_id
+            )
             if eval_score > max_eval:
                 max_eval = eval_score
                 best_action = action

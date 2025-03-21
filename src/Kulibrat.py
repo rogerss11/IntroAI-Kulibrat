@@ -1,11 +1,13 @@
 import time
-from GameState import GameState
-from Interface import *
 import numpy as np
-from minimax import minimax_search
+
+from src.GameState import GameState
+from src.Interface import *
+from src.Minimax import minimax_search
+from src.MonteCarlo import monte_carlo_search
 
 
-def Kulibrat(winning_score=5, N_sim=500, c_param=0.5):
+def Kulibrat(winning_score=5, ai="mmx", N_sim=500, c_param=0.5, search_depth=5):
     player1_type = question_ai_red()
     player2_type = question_ai_black()
 
@@ -29,7 +31,11 @@ def Kulibrat(winning_score=5, N_sim=500, c_param=0.5):
                 time.sleep(0.5)
             elif player1_type == "ai":
                 # AI intelligence
-                action = minimax_search(game, depth=5)
+                action = (
+                    minimax_search(game, depth=search_depth)
+                    if ai == "mmx"
+                    else monte_carlo_search(game, sim_no=N_sim, c_param=c_param)
+                )
                 game.move(action)
                 time.sleep(0.5)
 
@@ -45,8 +51,12 @@ def Kulibrat(winning_score=5, N_sim=500, c_param=0.5):
                 game.move(game.actions[game.player][action_idx])
                 time.sleep(0.5)
             elif player2_type == "ai":
-                action = minimax_search(game, depth=5)
-                game.move(action) 
+                action = (
+                    minimax_search(game, depth=search_depth)
+                    if ai == "mmx"
+                    else monte_carlo_search(game, sim_no=N_sim, c_param=c_param)
+                )
+                game.move(action)
                 time.sleep(0.5)
 
         ui.UI_board(game)
@@ -61,8 +71,8 @@ def Kulibrat(winning_score=5, N_sim=500, c_param=0.5):
     return
 
 
-def Kulibrat_console(winning_Score=5, N_sim=100, c_param=1.4):
-    game = GameState(winning_score=winning_Score)
+def Kulibrat_console(winning_score=5, ai="mmx", N_sim=500, c_param=0.5, search_depth=5):
+    game = GameState(winning_score=winning_score)
 
     # Ask the user for player types
     print("Before starting, choose the player types.")
@@ -88,7 +98,11 @@ def Kulibrat_console(winning_Score=5, N_sim=100, c_param=1.4):
                 game.move(game.actions[game.player][action_idx])
             elif player1_type == "ai":
                 # AI intelligence
-                action = minimax_search(game, depth=3)
+                action = (
+                    minimax_search(game, depth=search_depth)
+                    if ai == "mmx"
+                    else monte_carlo_search(game, sim_no=N_sim, c_param=c_param)
+                )
                 game.move(action)
 
         else:  # If it's player 2's turn
@@ -102,7 +116,11 @@ def Kulibrat_console(winning_Score=5, N_sim=100, c_param=1.4):
                 action_idx = np.random.randint(0, len(game.actions[game.player]))
                 game.move(game.actions[game.player][action_idx])
             elif player2_type == "ai":
-                action = minimax_search(game, depth=3)
+                action = (
+                    minimax_search(game, depth=search_depth)
+                    if ai == "mmx"
+                    else monte_carlo_search(game, sim_no=N_sim, c_param=c_param)
+                )
                 game.move(action)
 
         game.print_board()

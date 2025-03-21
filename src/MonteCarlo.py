@@ -2,12 +2,11 @@ import numpy as np
 from collections import defaultdict
 import random
 
-from GameState import GameState
-
 """
 Code inspired from:
 https://ai-boson.github.io/mcts/
 """
+
 
 class MonteCarlo:
     def __init__(self, game, parent=None, parent_action=None, c_param=0.5, sim_no=500):
@@ -77,7 +76,7 @@ class MonteCarlo:
         Returns True if the current node is a terminal node.
         """
         return self.state.terminal_test()
-    
+
     def is_scoring_move(self, action):
         move, start, end = action
         return move in ["diagonal", "jump"] and end == (-1, -1)
@@ -90,9 +89,9 @@ class MonteCarlo:
             return True
         start_row, _ = start
         end_row, _ = end
-        return (self.player == "B" and end_row > start_row) or (self.player == "R" and end_row < start_row)
-
-
+        return (self.player == "B" and end_row > start_row) or (
+            self.player == "R" and end_row < start_row
+        )
 
     def rollout(self):
         """
@@ -113,12 +112,12 @@ class MonteCarlo:
         elif current_rollout_state.winner == self.opponent:
             return -1
         elif current_rollout_state.terminal_test():
-            # terminó sin ganador, castigo suave
             return -0.5
         else:
-            # no terminó, evalúa posición
-            return (current_rollout_state.score[self.player] - current_rollout_state.score[self.opponent]) / self.state.winning_score
-
+            return (
+                current_rollout_state.score[self.player]
+                - current_rollout_state.score[self.opponent]
+            ) / self.state.winning_score
 
     def backpropagate(self, result):
         """
@@ -154,7 +153,7 @@ class MonteCarlo:
         if np.random.rand() < 0.05:
             chosen = np.random.choice(self.children)
             return chosen
-      
+
         return self.children[np.argmax(choices_weights)]
 
     def rollout_policy(self, possible_moves):
@@ -171,7 +170,7 @@ class MonteCarlo:
             if prioritized:
                 return random.choice(prioritized)
         return random.choice(possible_moves)
-    
+
     def _tree_policy(self):
         """
         Select a node to run rollout from.
