@@ -12,12 +12,19 @@ Denmark Technical University
 # Game parameters ---------------------------------------------------
 win_score = 5
 # AI paramters
-N_sim = 5000  # Number of simulations per move
-c_param = 0.5  # Higher C means more exploration
-epsilon = 0.5  # Epsilon-greedy policy, 1.0 means random policy
+N_sim = 1000  # Number of simulations per move
+c_param = 1  # Higher C means more exploration
+epsilon = 0.2  # 0.0 means heuristic policy, 1.0 means random policy
+score_depth = 5  # Depth of the score function
 
 # ======================== PLAY THE GAME ============================
 
 if __name__ == "__main__":  # Un/Comment to play in the UI or console
-    Kulibrat(winning_score=win_score, N_sim=N_sim, c_param=c_param, epsilon=0.1)  # UI
-    # Kulibrat_console(winning_score=win_score, N_sim=N_sim, c_param=c_param)  # Console
+    Kulibrat(
+        winning_score=win_score,
+        N_sim=N_sim,
+        c_param=c_param,
+        epsilon=epsilon,
+        score_depth=score_depth,
+    )  # UI
+    # Kulibrat_console(winning_score=win_score, N_sim=N_sim, c_param=c_param, score_depth=score_depth)  # Console
