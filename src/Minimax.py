@@ -20,11 +20,11 @@ def evaluate_state(state, player):
     pass_penalty = -3 if my_actions == [("pass", (-1, -1), (-1, -1))] else 0
 
     evaluation = (
-        score_diff * 10
+        score_diff * 20
         + len(scoring_moves) * 6
         - len(opponent_scoring_moves) * 4
         + len(attack_moves) * 5
-        - len(under_attack) * 2
+        - len(under_attack) * 5
         + remaining_diff * 1.5
         + (len(my_actions) - len(opp_actions)) * 0.5
         + pass_penalty

@@ -11,11 +11,14 @@ Denmark Technical University
 # ======================== GAME PARAMETERS ============================
 
 # Game parameters
-win_score = 3
-# AI paramters
+win_score = 5
+
+# Select AI type
 ai_type = "mmx"  # "mmx" or "mcts"
+
 # Minimax parameters:
-search_depth = 5
+search_depth = 7  # Higher means better but slower AI
+
 # Monte Carlo parameters:
 N_sim = 100
 c_param = 1.4
