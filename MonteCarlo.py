@@ -10,7 +10,7 @@ https://ai-boson.github.io/mcts/
 """
 
 class MonteCarlo:
-    def __init__(self, game, parent=None, parent_action=None, c_param=1.4, sim_no=100):
+    def __init__(self, game, parent=None, parent_action=None, c_param=0.5, sim_no=500):
         self.state = game.clone_state()
         self.player = self.state.player
         self.opponent = "B" if self.player == "R" else "R"
@@ -41,7 +41,7 @@ class MonteCarlo:
         """
         wins = self._results[1]
         loses = self._results[-1]
-        return wins - loses
+        return self._results["sum"] / self._number_of_visits
 
     def n(self):  # N(n)
         """
@@ -56,15 +56,20 @@ class MonteCarlo:
         """
         if not self._untried_actions:
             return None
-        else:
-            action = self._untried_actions.pop()
-            next_state = self.state.clone_state()
-            next_state.move(action)
-            child_node = MonteCarlo(next_state, parent=self, parent_action=action)
 
-            self.children.append(child_node)
+        action = self._untried_actions.pop()
+        next_state = self.state.clone_state()
+        next_state.move(action)
 
-        
+        child_node = MonteCarlo(
+            next_state,
+            parent=self,
+            parent_action=action,
+            c_param=self._c,
+            sim_no=self._sim_no,
+        )
+
+        self.children.append(child_node)
         return child_node
 
     def is_terminal_node(self):
@@ -73,34 +78,20 @@ class MonteCarlo:
         """
         return self.state.terminal_test()
     
-    def is_forward_move(self, action):
-        """
-        Determines if a move advances a piece towards scoring.
-
-        action: A tuple (move, start, end)
-                Example: ("diagonal", (row1, col1), (row2, col2))
-
-        Returns:
-            True if the move is forward, False otherwise.
-        """
+    def is_scoring_move(self, action):
         move, start, end = action
+        return move in ["diagonal", "jump"] and end == (-1, -1)
 
-        # Ignore moves that do not involve board movement
+    def is_forward_move(self, action):
+        move, start, end = action
         if move in ["insert", "pass"]:
             return False
-
-        start_row, start_col = start
-        end_row, end_col = end
-
-        # Moves that exit the board are always forward (scoring)
-        if end_row == -1:
+        if end == (-1, -1):
             return True
+        start_row, _ = start
+        end_row, _ = end
+        return (self.player == "B" and end_row > start_row) or (self.player == "R" and end_row < start_row)
 
-        # Forward movement depends on the player's piece
-        if self.player == "B":  # Black moves downward
-            return end_row > start_row
-        else:  # Red moves upward
-            return end_row < start_row
 
 
     def rollout(self):
@@ -117,16 +108,25 @@ class MonteCarlo:
             action = self.rollout_policy(possible_moves)
             current_rollout_state.move(action)
 
-        score = 1 if current_rollout_state.winner == self.player else -1
-        return score
+        if current_rollout_state.winner == self.player:
+            return 1
+        elif current_rollout_state.winner == self.opponent:
+            return -1
+        elif current_rollout_state.terminal_test():
+            # terminó sin ganador, castigo suave
+            return -0.5
+        else:
+            # no terminó, evalúa posición
+            return (current_rollout_state.score[self.player] - current_rollout_state.score[self.opponent]) / self.state.winning_score
+
 
     def backpropagate(self, result):
         """
         The node statistics are updated.
         The result of the playout is backpropagated from the tree to the root.
         """
+        self._results["sum"] += result
         self._number_of_visits += 1
-        self._results[result] += 1
         if self.parent:
             self.parent.backpropagate(result)
 
@@ -143,10 +143,18 @@ class MonteCarlo:
         The child with the highest value is returned.
         UCB1 = U(n) / N(n) + c * sqrt(ln(N(parent_n)) / N(n))
         """
+        for child in self.children:
+            if child.is_terminal_node() and child.state.winner == self.player:
+                return child  # Ganar inmediatamente
         choices_weights = [
-            (child.q() / (child.n()+ 1e-6)) + self._c * np.sqrt((np.log(self.n()) / child.n()))
+            child.q() + self._c * np.sqrt(np.log(self.n()) / (child.n() + 1e-6))
             for child in self.children
         ]
+
+        if np.random.rand() < 0.05:
+            chosen = np.random.choice(self.children)
+            return chosen
+      
         return self.children[np.argmax(choices_weights)]
 
     def rollout_policy(self, possible_moves):
@@ -154,12 +162,16 @@ class MonteCarlo:
         Function to select a move from the possible moves.
         In this case, a random move is selected.
         """
-        forward_moves = [move for move in possible_moves if self.is_forward_move(move)]
-        
-        if forward_moves:  # If there are forward moves, prioritize them
-            return random.choice(forward_moves)
-        else:  # Otherwise, pick any legal move
-            return random.choice(possible_moves)
+        scoring = [a for a in possible_moves if self.is_scoring_move(a)]
+        attacking = [a for a in possible_moves if a[0] == "attack"]
+        jumping = [a for a in possible_moves if a[0] == "jump"]
+        forward = [a for a in possible_moves if self.is_forward_move(a)]
+
+        for prioritized in [scoring, attacking, jumping, forward]:
+            if prioritized:
+                return random.choice(prioritized)
+        return random.choice(possible_moves)
+    
     def _tree_policy(self):
         """
         Select a node to run rollout from.

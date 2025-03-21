@@ -5,7 +5,7 @@ import numpy as np
 from MonteCarlo import monte_carlo_search
 
 
-def Kulibrat(winning_score=5, N_sim=80, c_param=1.4):
+def Kulibrat(winning_score=5, N_sim=500, c_param=0.5):
     player1_type = question_ai_red()
     player2_type = question_ai_black()
 
@@ -46,7 +46,7 @@ def Kulibrat(winning_score=5, N_sim=80, c_param=1.4):
                 time.sleep(0.5)
             elif player2_type == "ai":
                 action = monte_carlo_search(game, sim_no=N_sim, c_param=c_param)
-                game.move(action)
+                game.move(action) 
                 time.sleep(0.5)
 
         ui.UI_board(game)
