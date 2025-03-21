@@ -1,11 +1,11 @@
 import time
-from GameState import GameState
-from Interface import *
 import numpy as np
-from MonteCarlo import monte_carlo_search
+from src.GameState import GameState
+from src.Interface import *
+from src.MonteCarlo import monte_carlo_search
 
 
-def Kulibrat(winning_score=5, N_sim=100, c_param=1.4):
+def Kulibrat(winning_score=5, N_sim=100, c_param=1, epsilon=0.1):
     player1_type = question_ai_red()
     player2_type = question_ai_black()
 
@@ -29,7 +29,9 @@ def Kulibrat(winning_score=5, N_sim=100, c_param=1.4):
                 time.sleep(0.5)
             elif player1_type == "ai":
                 # AI intelligence
-                action = monte_carlo_search(game, sim_no=N_sim, c_param=c_param)
+                action = monte_carlo_search(
+                    game, sim_no=N_sim, c_param=c_param, epsilon=epsilon
+                )
                 game.move(action)
                 time.sleep(0.5)
 
@@ -45,7 +47,9 @@ def Kulibrat(winning_score=5, N_sim=100, c_param=1.4):
                 game.move(game.actions[game.player][action_idx])
                 time.sleep(0.5)
             elif player2_type == "ai":
-                action = monte_carlo_search(game, sim_no=N_sim, c_param=c_param)
+                action = monte_carlo_search(
+                    game, sim_no=N_sim, c_param=c_param, epsilon=epsilon
+                )
                 game.move(action)
                 time.sleep(0.5)
 
@@ -61,8 +65,8 @@ def Kulibrat(winning_score=5, N_sim=100, c_param=1.4):
     return
 
 
-def Kulibrat_console(winning_Score=5, N_sim=100, c_param=1.4):
-    game = GameState(winning_score=winning_Score)
+def Kulibrat_console(winning_score=5, N_sim=100, c_param=1, epsilon=0.1):
+    game = GameState(winning_score=winning_score)
 
     # Ask the user for player types
     print("Before starting, choose the player types.")
@@ -88,7 +92,9 @@ def Kulibrat_console(winning_Score=5, N_sim=100, c_param=1.4):
                 game.move(game.actions[game.player][action_idx])
             elif player1_type == "ai":
                 # AI intelligence
-                action = monte_carlo_search(game, sim_no=N_sim, c_param=c_param)
+                action = monte_carlo_search(
+                    game, sim_no=N_sim, c_param=c_param, epsilon=epsilon
+                )
                 game.move(action)
 
         else:  # If it's player 2's turn
@@ -102,7 +108,9 @@ def Kulibrat_console(winning_Score=5, N_sim=100, c_param=1.4):
                 action_idx = np.random.randint(0, len(game.actions[game.player]))
                 game.move(game.actions[game.player][action_idx])
             elif player2_type == "ai":
-                action = monte_carlo_search(game, sim_no=N_sim, c_param=c_param)
+                action = monte_carlo_search(
+                    game, sim_no=N_sim, c_param=c_param, epsilon=epsilon
+                )
                 game.move(action)
 
         game.print_board()

@@ -252,20 +252,31 @@ class GameState:
         Also updates the self.game_over, self.winner and self.utility attributes.
         """
         self.find_actions()
-        if (self.score["B"] >= self.winning_score) or (
-            self.player == "B" and not self.actions["R"] and not self.actions["B"]
-        ):
+
+        # Check if any player reached the winning score.
+        if self.score["B"] >= self.winning_score:
             self.winner = "B"
             self.utility = 1
             self.game_over = True
             return self.game_over
-        if (self.score["R"] >= self.winning_score) or (
-            self.player == "R" and not self.actions["B"] and not self.actions["R"]
-        ):
+        if self.score["R"] >= self.winning_score:
             self.winner = "R"
             self.utility = -1
             self.game_over = True
             return self.game_over
+
+        # Check if current player has no available moves.
+        if self.player == "B" and not self.actions["R"] and not self.actions["B"]:
+            self.winner = "R"
+            self.utility = -1
+            self.game_over = True
+            return self.game_over
+        if self.player == "R" and not self.actions["B"] and not self.actions["R"]:
+            self.winner = "B"
+            self.utility = 1
+            self.game_over = True
+            return self.game_over
+
         self.game_over = False
         return self.game_over
 
