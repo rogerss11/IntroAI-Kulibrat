@@ -123,13 +123,8 @@ class MonteCarlo:
 
     def best_child(self):
         """
-        Returns the best child node based on the UCB formula, but with an epsilon-greedy twist:
-        with probability epsilon, a random child is selected.
+        Returns the best child node based on the UCB formula.
         """
-        if np.random.rand() < self._epsilon:
-            chosen = np.random.choice(self.children)
-            return chosen
-
         choices_weights = []
         for child in self.children:
             weight = (child.q() / child.n()) + self._c * np.sqrt(
@@ -152,9 +147,9 @@ class MonteCarlo:
         Chooses a move during rollout.
         With probability epsilon a random move is selected for exploration.
         Otherwise, the move with the highest heuristic evaluation is chosen.
+        epsilon = 1.0 means random policy.
         """
         if np.random.rand() < self._epsilon:
-            # Use Python's random.choice instead of np.random.choice.
             return random.choice(possible_moves)
 
         best_move = None

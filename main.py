@@ -12,9 +12,9 @@ Denmark Technical University
 # Game parameters ---------------------------------------------------
 win_score = 5
 # AI paramters
-N_sim = 1000  # Number of simulations per move
-c_param = 1  # Higher C means more exploration
-epsilon = 0.1  # Epsilon-greedy policy
+N_sim = 5000  # Number of simulations per move
+c_param = 0.5  # Higher C means more exploration
+epsilon = 0.5  # Epsilon-greedy policy, 1.0 means random policy
 
 # ======================== PLAY THE GAME ============================
 
