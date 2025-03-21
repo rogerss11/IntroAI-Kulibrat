@@ -72,7 +72,7 @@ def minimax(state, depth, alpha, beta, maximizing_player, player_id):
         return min_eval, best_action
 
 
-def minimax_search(state, depth=4):
+def minimax_search(state, depth=5):
     # Adaptive depth
     pieces_on_board = sum(
         1 for row in state.board for cell in row if cell in ["B", "R"]

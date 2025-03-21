@@ -29,7 +29,7 @@ def Kulibrat(winning_score=5, N_sim=500, c_param=0.5):
                 time.sleep(0.5)
             elif player1_type == "ai":
                 # AI intelligence
-                action = minimax_search(game, depth=4)
+                action = minimax_search(game, depth=5)
                 game.move(action)
                 time.sleep(0.5)
 
@@ -45,7 +45,7 @@ def Kulibrat(winning_score=5, N_sim=500, c_param=0.5):
                 game.move(game.actions[game.player][action_idx])
                 time.sleep(0.5)
             elif player2_type == "ai":
-                action = minimax_search(game, depth=4)
+                action = minimax_search(game, depth=5)
                 game.move(action) 
                 time.sleep(0.5)
 
