@@ -1,11 +1,13 @@
 import time
 import numpy as np
+
 from src.GameState import GameState
 from src.Interface import *
+from src.Minimax import minimax_search
 from src.MonteCarlo import monte_carlo_search
 
 
-def Kulibrat(winning_score=5, N_sim=15, c_param=1, epsilon=0.1, score_depth=100000):
+def Kulibrat(winning_score=5, ai="mmx", N_sim=500, c_param=0.5, search_depth=5):
     player1_type = question_ai_red()
     player2_type = question_ai_black()
 
@@ -29,12 +31,10 @@ def Kulibrat(winning_score=5, N_sim=15, c_param=1, epsilon=0.1, score_depth=1000
                 time.sleep(0.5)
             elif player1_type == "ai":
                 # AI intelligence
-                action = monte_carlo_search(
-                    game,
-                    sim_no=N_sim,
-                    c_param=c_param,
-                    epsilon=epsilon,
-                    score_depth=score_depth,
+                action = (
+                    minimax_search(game, depth=search_depth)
+                    if ai == "mmx"
+                    else monte_carlo_search(game, sim_no=N_sim, c_param=c_param)
                 )
                 game.move(action)
                 time.sleep(0.5)
@@ -51,12 +51,10 @@ def Kulibrat(winning_score=5, N_sim=15, c_param=1, epsilon=0.1, score_depth=1000
                 game.move(game.actions[game.player][action_idx])
                 time.sleep(0.5)
             elif player2_type == "ai":
-                action = monte_carlo_search(
-                    game,
-                    sim_no=N_sim,
-                    c_param=c_param,
-                    epsilon=epsilon,
-                    score_depth=score_depth,
+                action = (
+                    minimax_search(game, depth=search_depth)
+                    if ai == "mmx"
+                    else monte_carlo_search(game, sim_no=N_sim, c_param=c_param)
                 )
                 game.move(action)
                 time.sleep(0.5)
@@ -73,9 +71,7 @@ def Kulibrat(winning_score=5, N_sim=15, c_param=1, epsilon=0.1, score_depth=1000
     return
 
 
-def Kulibrat_console(
-    winning_score=5, N_sim=15, c_param=1, epsilon=0.1, score_depth=100000
-):
+def Kulibrat_console(winning_score=5, ai="mmx", N_sim=500, c_param=0.5, search_depth=5):
     game = GameState(winning_score=winning_score)
 
     # Ask the user for player types
@@ -102,12 +98,10 @@ def Kulibrat_console(
                 game.move(game.actions[game.player][action_idx])
             elif player1_type == "ai":
                 # AI intelligence
-                action = monte_carlo_search(
-                    game,
-                    sim_no=N_sim,
-                    c_param=c_param,
-                    epsilon=epsilon,
-                    score_depth=score_depth,
+                action = (
+                    minimax_search(game, depth=search_depth)
+                    if ai == "mmx"
+                    else monte_carlo_search(game, sim_no=N_sim, c_param=c_param)
                 )
                 game.move(action)
 
@@ -122,12 +116,10 @@ def Kulibrat_console(
                 action_idx = np.random.randint(0, len(game.actions[game.player]))
                 game.move(game.actions[game.player][action_idx])
             elif player2_type == "ai":
-                action = monte_carlo_search(
-                    game,
-                    sim_no=N_sim,
-                    c_param=c_param,
-                    epsilon=epsilon,
-                    score_depth=score_depth,
+                action = (
+                    minimax_search(game, depth=search_depth)
+                    if ai == "mmx"
+                    else monte_carlo_search(game, sim_no=N_sim, c_param=c_param)
                 )
                 game.move(action)
 
