@@ -112,14 +112,62 @@ class MonteCarlo:
             (child.q() / child.n()) + self._c * np.sqrt((np.log(self.n()) / child.n()))
             for child in self.children
         ]
-        return self.children[np.argmax(choices_weights)]
+        for child in self.children:
+            if child.n() == 0:
+                return float('inf')
+        else:
+            return self.children[np.argmax(choices_weights)]
 
+    '''
+    def is_scoring_move(self, state, move, player):
+        """
+        Returns True if the move results in scoring points.
+        """
+        temp_state = state.clone_state()
+        temp_state.move(move)
+        return temp_state.score[player] > state.score[player]
+
+    def heuristic(self, state):
+        """
+        Evaluates a game state based on available actions and scoring potential.
+        """
+        player_actions = state.find_actions()[self.player]
+        opponent_actions = state.find_actions()[self.opponent]
+
+        scoring_moves = sum(1 for move in player_actions if self.is_scoring_move(state, move, self.player))
+        opponent_scoring_moves = sum(1 for move in opponent_actions if self.is_scoring_move(state, move, self.opponent))
+
+        return (
+            2 * scoring_moves  # Reward moves that lead to scoring
+            - 1.5 * opponent_scoring_moves  # Penalize states where opponent can score
+            + 0.1 * (len(player_actions) - len(opponent_actions))  # Mobility bonus
+        )
+
+    '''
     def rollout_policy(self, possible_moves):
         """
         Function to select a move from the possible moves.
         In this case, a random move is selected.
         """
         return possible_moves[np.random.randint(len(possible_moves))]
+    
+    '''
+    def rollout_policy(self, possible_moves):
+        """
+        Selects the best move based on scoring potential.
+        """
+        best_move = max(possible_moves, key=lambda move: self.evaluate_move(move))
+        print(f"Selected move: {best_move}")
+        return best_move
+
+    def evaluate_move(self, move):
+        """
+        Evaluates a move based on the heuristic.
+        """
+        temp_state = self.state.clone_state()
+        temp_state.move(move)
+        return self.heuristic(temp_state)
+    '''
 
     def _tree_policy(self):
         """
@@ -141,7 +189,7 @@ class MonteCarlo:
 
         for i in range(simulation_no):
 
-            v = self._tree_policy()
+            v = self._tree_policy()            
             reward = v.rollout()
             v.backpropagate(reward)
 
